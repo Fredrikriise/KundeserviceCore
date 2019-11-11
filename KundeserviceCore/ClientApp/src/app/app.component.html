@@ -1,0 +1,119 @@
+
+<header>
+  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container">
+      <a class="navbar-brand">Vy Kundeservice</a>
+      <button class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target=".navbar-collapse"
+              aria-label="Toggle navigation"
+              [attr.aria-expanded]="isExpanded"
+              (click)="toggle()">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+           [ngClass]="{ show: isExpanded }">
+        <ul class="navbar-nav flex-grow">
+
+          <li class="nav-item">
+            <a class="nav-link text-dark" (click)='tilbakeTilHjem()'>Hjem</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-dark">FAQ</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-dark" (click)='registrerInnsporsmal()'>Send inn spørsmål</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-dark" (click)='tilbakeTilInnsporsmal()'>Innsendte spørsmål</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<body>
+  <!-- Visning av hjem div -->
+  <div class="col-md-6 col-md-offset-1" *ngIf="visHjem">
+    <h2>Velkommen til Vy kundeservice</h2>
+    <p>
+      Velkommen til Vy sin kundeservice side. Dersom du lurer på noe, får du mest sannsynlig svar på spørsmålet ditt her.<br />
+      Hvis ikke, kan du sende inn spørsmålet du har, så vil vi svare deg i løpet av kort tid!
+    </p>
+    <button class="btn btn-primary" (click)="registrerInnsporsmal()">Send inn spørsmål</button> |
+    <button class="btn btn-primary" (click)="tilbakeTilInnsporsmal()">Se alle spørsmål</button>
+
+  </div>
+
+  <!-- Visning av alle innsendte spørsmål div -->
+  <div class="col-md-6 col-md-offset-2" *ngIf="visInnsporsmalListe">
+    <h1>Velkommen til Vy kundeservice</h1>
+    <div *ngIf="laster">Laster skjema.....</div>
+    <table class="table table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th>Navn</th>
+          <th>Epostadresse</th>
+          <th>Spørsmål</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let innsporsmal of alleInnsporsmal">
+        <tr>
+          <td>{{innsporsmal.navn}}</td>
+          <td>{{innsporsmal.epost}}</td>
+          <td>{{innsporsmal.sporsmal}}</td>
+          <td><button class="btn btn-danger" (click)="slettInnsporsmal(innsporsmal.id)">Slett</button></td> |
+          <td><button class="btn btn-success" (click)="endreInnsporsmal(innsporsmal.id)">Endre</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-primary" (click)="tilbakeTilInnsendigAvSporsmal()">Tilbake til innsending av spørsmål</button> |
+    <button class="btn btn-primary" (click)="tilbakeTilHjem()">Tilbake til hjem</button>
+  </div>
+
+  <!-- Visning av registrering av nytt spørsmål div -->
+  <div class="col-sm-4 col-sm-offset-3" *ngIf="visInnsporsmal">
+    <h2>Fant du ikke svar på det du lurte på? Send inn et spørsmål da vell!</h2>
+    <form [formGroup]="InnsporsmalSkjema" (ngSubmit)="onSubmit()">
+      <input class="form-control" formControlName="id" type="hidden" />
+      <div class="form-group">
+        <label>Navn</label>
+        <input class="form-control" formControlName="navn" placeholder="Navn"/>
+        <p class="alert alert-warning" [hidden]="InnsporsmalSkjema.controls.navn.valid || (InnsporsmalSkjema.controls.navn.pristine && !submitted)">
+          Navn er obligatorisk!
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label>Epost</label>
+        <input class="form-control" formControlName="epost" placeholder="Epostadresse"/>
+        <p class="alert alert-warning" [hidden]="InnsporsmalSkjema.controls.epost.valid || (InnsporsmalSkjema.controls.epost.pristine && !submitted)">
+          Epost er obligatorisk!
+        </p>
+      </div>
+      <div class="form-group">
+        <label>Spørsmål</label>
+        <input class="form-control" formControlName="sporsmal" placeholder="Hva lurer du på?"/>
+        <p class="alert alert-warning" [hidden]="InnsporsmalSkjema.controls.sporsmal.valid || (InnsporsmalSkjema.controls.sporsmal.pristine && !submitted)">
+          Spørsmål er obligatorisk!
+        </p>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" *ngIf="InnsporsmalStatus=='Endre'" [disabled]="!InnsporsmalSkjema.valid" class="btn btn-primary">Endre</button> 
+        <button type="submit" *ngIf="InnsporsmalStatus=='Registrer'" [disabled]="!InnsporsmalSkjema.valid" class="btn btn-success">Send inn spørsmål</button> |
+        <button class="btn btn-primary" (click)="tilbakeTilInnsporsmal()">Tilbake til alle innsendte spørsmål</button> |
+        <button class="btn btn-primary" (click)="tilbakeTilHjem()">Tilbake til hjem</button>
+      </div>
+    </form>
+  </div>
+</body>
+
+
+
+
